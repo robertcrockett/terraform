@@ -1,6 +1,6 @@
 module github.com/hashicorp/terraform/internal/backend/remote-state/gcs
 
-go 1.22.0
+go 1.22.4
 
 require (
 	cloud.google.com/go/kms v1.15.0
@@ -20,7 +20,7 @@ require (
 	cloud.google.com/go/iam v1.1.1 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
-	github.com/apparentlymart/go-versions v1.0.1 // indirect
+	github.com/apparentlymart/go-versions v1.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect

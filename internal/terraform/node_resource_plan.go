@@ -102,8 +102,8 @@ func (n *nodeExpandPlannableResource) DynamicExpand(ctx EvalContext) (*Graph, tf
 	// resource. The config maybe nil if we are generating configuration, or
 	// deleting a resource.
 	if n.Config != nil {
-		diags = diags.Append(validateSelfRefInExpr(n.Addr.Resource, n.Config.Count))
-		diags = diags.Append(validateSelfRefInExpr(n.Addr.Resource, n.Config.ForEach))
+		diags = diags.Append(validateMetaSelfRef(n.Addr.Resource, n.Config.Count))
+		diags = diags.Append(validateMetaSelfRef(n.Addr.Resource, n.Config.ForEach))
 		if diags.HasErrors() {
 			return nil, diags
 		}
@@ -165,16 +165,16 @@ func (n *nodeExpandPlannableResource) expandResourceImports(ctx EvalContext) (ad
 		}
 
 		if imp.Config.ForEach == nil {
-			importID, evalDiags := evaluateImportIdExpression(imp.Config.ID, ctx, EvalDataForNoInstanceKey)
-			diags = diags.Append(evalDiags)
-			if diags.HasErrors() {
-				return imports, diags
-			}
-
 			traversal, hds := hcl.AbsTraversalForExpr(imp.Config.To)
 			diags = diags.Append(hds)
 			to, tds := addrs.ParseAbsResourceInstance(traversal)
 			diags = diags.Append(tds)
+			if diags.HasErrors() {
+				return imports, diags
+			}
+
+			importID, evalDiags := evaluateImportIdExpression(imp.Config.ID, to, ctx, EvalDataForNoInstanceKey)
+			diags = diags.Append(evalDiags)
 			if diags.HasErrors() {
 				return imports, diags
 			}
@@ -198,7 +198,7 @@ func (n *nodeExpandPlannableResource) expandResourceImports(ctx EvalContext) (ad
 				return imports, diags
 			}
 
-			importID, evalDiags := evaluateImportIdExpression(imp.Config.ID, ctx, keyData)
+			importID, evalDiags := evaluateImportIdExpression(imp.Config.ID, res, ctx, keyData)
 			diags = diags.Append(evalDiags)
 			if diags.HasErrors() {
 				return imports, diags

@@ -1,6 +1,6 @@
 module github.com/hashicorp/terraform/internal/backend/remote-state/oss
 
-go 1.22.0
+go 1.22.4
 
 require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1501
@@ -17,7 +17,7 @@ require (
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
-	github.com/apparentlymart/go-versions v1.0.1 // indirect
+	github.com/apparentlymart/go-versions v1.0.2 // indirect
 	github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
