@@ -1,6 +1,6 @@
 module github.com/hashicorp/terraform/internal/backend/remote-state/kubernetes
 
-go 1.22.0
+go 1.22.4
 
 require (
 	github.com/hashicorp/terraform v0.0.0-00010101000000-000000000000
@@ -25,7 +25,7 @@ require (
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
-	github.com/apparentlymart/go-versions v1.0.1 // indirect
+	github.com/apparentlymart/go-versions v1.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.8.0 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect

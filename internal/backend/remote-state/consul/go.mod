@@ -1,6 +1,6 @@
 module github.com/hashicorp/terraform/internal/backend/remote-state/consul
 
-go 1.22.0
+go 1.22.4
 
 require (
 	github.com/hashicorp/consul/api v1.13.0
@@ -12,7 +12,7 @@ require (
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect
 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
-	github.com/apparentlymart/go-versions v1.0.1 // indirect
+	github.com/apparentlymart/go-versions v1.0.2 // indirect
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.16.0 // indirect

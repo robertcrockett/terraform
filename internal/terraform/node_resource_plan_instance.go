@@ -161,7 +161,7 @@ func (n *NodePlannableResourceInstance) managedResourceExecute(ctx EvalContext) 
 		}
 	}
 
-	importing := n.importTarget.IDString != ""
+	importing := n.importTarget.IDString != "" && !n.preDestroyRefresh
 	importId := n.importTarget.IDString
 
 	var deferred *providers.Deferred
@@ -197,14 +197,13 @@ func (n *NodePlannableResourceInstance) managedResourceExecute(ctx EvalContext) 
 		}
 	}
 
-	// In 0.13 we could be refreshing a resource with no config.
-	// We should be operating on managed resource, but check here to be certain
-	if n.Config == nil || n.Config.Managed == nil {
-		log.Printf("[WARN] managedResourceExecute: no Managed config value found in instance state for %q", n.Addr)
-	} else {
-		if instanceRefreshState != nil {
-			instanceRefreshState.CreateBeforeDestroy = n.Config.Managed.CreateBeforeDestroy || n.ForceCreateBeforeDestroy
-		}
+	// we may need to detect a change in CreateBeforeDestroy to ensure it's
+	// stored when we are not refreshing
+	updatedCBD := false
+	if n.Config != nil && n.Config.Managed != nil && instanceRefreshState != nil {
+		newCBD := n.Config.Managed.CreateBeforeDestroy || n.ForceCreateBeforeDestroy
+		updatedCBD = instanceRefreshState.CreateBeforeDestroy != newCBD
+		instanceRefreshState.CreateBeforeDestroy = newCBD
 	}
 
 	var refreshDeferred *providers.Deferred
@@ -238,6 +237,16 @@ func (n *NodePlannableResourceInstance) managedResourceExecute(ctx EvalContext) 
 		if deferred == nil {
 			diags = diags.Append(n.writeResourceInstanceState(ctx, instanceRefreshState, refreshState))
 		}
+		if diags.HasErrors() {
+			return diags
+		}
+	}
+
+	if n.skipRefresh && !importing && updatedCBD {
+		// CreateBeforeDestroy must be set correctly in the state which is used
+		// to create the apply graph, so if we did not refresh the state make
+		// sure we still update any changes to CreateBeforeDestroy.
+		diags = diags.Append(n.writeResourceInstanceState(ctx, instanceRefreshState, refreshState))
 		if diags.HasErrors() {
 			return diags
 		}
@@ -311,7 +320,7 @@ func (n *NodePlannableResourceInstance) managedResourceExecute(ctx EvalContext) 
 			// refresh or planning stage. We'll report the deferral and
 			// store what we could produce in the deferral tracker.
 			deferrals.ReportResourceInstanceDeferred(addr, deferred.Reason, change)
-		} else if !deferrals.ShouldDeferResourceInstanceChanges(n.Addr) {
+		} else if !deferrals.ShouldDeferResourceInstanceChanges(n.Addr, n.Dependencies) {
 			// We intentionally write the change before the subsequent checks, because
 			// all of the checks below this point are for problems caused by the
 			// context surrounding the change, rather than the change itself, and
